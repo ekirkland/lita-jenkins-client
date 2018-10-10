@@ -103,7 +103,9 @@ class Lita::Handlers::JenkinsClient < Lita::Handler
         return
       end
 
-      res.reply api_exec { client.job.get_current_build_number(res.args[2]).inspect }
+      buildNum = api_exec { client.job.get_current_build_number(res.args[2]).inspect }
+      status = api_exec { client.job.get_current_build_status(res.args[2]).inspect }
+      res.reply "The latest build number is #{buildNum} and its status is #{status}"
     end
 
     def exists?(res)
