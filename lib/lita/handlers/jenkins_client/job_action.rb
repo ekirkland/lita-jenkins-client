@@ -21,6 +21,7 @@ class Lita::Handlers::JenkinsClient < Lita::Handler
           build: Command.new(name: 'build', matcher: 'build', help: "build job, #{BuildParam.print_supported_types}", usage: 'build [job name] [param_key:param_value]'),
           params: Command.new(name: 'params', matcher: 'params', help: 'obtain the build parameters of a job.', usage: 'params [job_name]'),
           exists?: Command.new(name: 'exists?', matcher: 'exists', help: 'check if a job exists', usage: 'exists [job name]'),
+          latest:  Command.new(name: 'latest', matcher: 'latest', help: 'get the latest build number if successful', usage: 'latest [job name]'),
         })
       end
     end
@@ -94,6 +95,15 @@ class Lita::Handlers::JenkinsClient < Lita::Handler
       end
 
       res.reply api_exec { client.job.get_current_build_status(res.args[2]).inspect }
+    end
+
+    def latest(res)
+      if res.args.length < 3 
+        res.reply 'please provide a job name'
+        return
+      end
+
+      res.reply api_exec { client.job.get_current_build_number(res.args[2]).inspect }
     end
 
     def exists?(res)
